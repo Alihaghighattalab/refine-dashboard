@@ -1,5 +1,6 @@
 import {
   Authenticated,
+  ErrorComponent,
   GitHubBanner,
   Refine,
   WelcomePage,
@@ -13,6 +14,7 @@ import "@refinedev/antd/dist/reset.css";
 import routerBindings, {
   CatchAllNavigate,
   DocumentTitleHandler,
+  NavigateToResource,
   UnsavedChangesNotifier,
 } from "@refinedev/react-router-v6";
 import { App as AntdApp } from "antd";
@@ -26,6 +28,16 @@ import { ForgotPassword } from "./pages/forgotPassword";
 import { resources } from "./config/resources";
 import { dataProvider, liveProvider } from "./providers";
 import { Layout } from "./components/layout";
+import {
+  CompanyCreatePage,
+  CompanyEditPage,
+  CompanyListPage,
+} from "@/components";
+import {
+  TasksCreatePage,
+  TasksEditPage,
+  TasksListPage,
+} from "./components/tasks";
 
 function App() {
   return (
@@ -52,7 +64,6 @@ function App() {
               >
                 <Routes>
                   <Route path="/register" element={<Register />} />
-                  <Route path="/login" element={<Login />} />
                   <Route path="/forgot-password" element={<ForgotPassword />} />
                   <Route
                     element={
@@ -67,6 +78,39 @@ function App() {
                     }
                   >
                     <Route index element={<DashboardPage />} />
+
+                    <Route
+                      path="/tasks"
+                      element={
+                        <TasksListPage>
+                          <Outlet />
+                        </TasksListPage>
+                      }
+                    >
+                      <Route path="new" element={<TasksCreatePage />} />
+                      <Route path="edit/:id" element={<TasksEditPage />} />
+                    </Route>
+
+                    <Route path="/companies">
+                      <Route index element={<CompanyListPage />} />
+                      <Route path="new" element={<CompanyCreatePage />} />
+                      <Route path="edit/:id" element={<CompanyEditPage />} />
+                    </Route>
+
+                    <Route path="*" element={<ErrorComponent />} />
+                  </Route>
+
+                  <Route
+                    element={
+                      <Authenticated
+                        key="authenticated-auth"
+                        fallback={<Outlet />}
+                      >
+                        <NavigateToResource resource="dashboard" />
+                      </Authenticated>
+                    }
+                  >
+                    <Route path="/login" element={<Login />} />
                   </Route>
                 </Routes>
                 <RefineKbar />
